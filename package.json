@@ -1,0 +1,10 @@
+{
+  "name": "whammy-midi-controller",
+  "version": "0.0.1",
+  "description": "A midi controller for the Digitech Whammy pedal",
+  "main": "index.js",
+  "dependencies": {
+    "easymidi": "0.0.2",
+    "minimist": "^1.2.0"
+  }
+}
