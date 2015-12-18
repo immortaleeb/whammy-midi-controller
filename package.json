@@ -5,6 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "easymidi": "0.0.2",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
   }
 }
