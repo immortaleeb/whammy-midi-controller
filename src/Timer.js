@@ -21,6 +21,9 @@ class Timer extends EventEmitter {
   // Returns the time interval in milliseconds
   get timeInterval() { return this._timeInterval; }
 
+  // Returns true if the timer is running
+  get isRunning() { return this._running; }
+
   _onTimeout() {
     var now, timeout;
 

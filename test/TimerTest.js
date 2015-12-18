@@ -11,6 +11,27 @@ function timestamp() {
 const PRECISION = 10; // precision in ms
 
 describe('Timer', () => {
+  describe('#isRunning', () => {
+    it('should be false by default', () => {
+      let timer = new Timer();
+      timer.isRunning.should.equal(false);
+    });
+
+    it('should be true when timer has started', () => {
+      let timer = new Timer();
+      timer.start();
+      timer.isRunning.should.equal(true);
+      timer.stop();
+    });
+
+    it('should be false when timer has stopped', () => {
+      let timer = new Timer();
+      timer.start();
+      timer.stop();
+      timer.isRunning.should.equal(false);
+    });
+  });
+
   describe('#setInterval', () => {
     it('should set the time interval', () => {
       let timer = new Timer();
