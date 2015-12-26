@@ -1,7 +1,10 @@
 "use strict";
 
 const minimist = require('minimist'),
-      easymidi = require('easymidi');
+      easymidi = require('easymidi'),
+      fs = require('fs'),
+      WhammyController = require('./src/WhammyController'),
+      WhammyControlActionSequencerFileReader = require('./src/WhammyControlActionSequencerFileReader');
 
 function parseArguments() {
   let argv = minimist(process.argv.slice(2));
@@ -17,7 +20,7 @@ function parseArguments() {
   let midiOutputs = easymidi.getOutputs();
   if (midiOutputIndex < 0 || midiOutputIndex >= midiOutputs.length)
     throw new Error(`${midiOutputIndex} is an invalid midi output number`);
-  let midiOutput = midiOutputs[midiOutputIndex];
+  let midiOutput = new easymidi.Output(midiOutputs[midiOutputIndex]);
 
   // Parse the midi channel
   let midiChannel = typeof argv.c === 'undefined' ? argv.channel : argv.c;
@@ -25,8 +28,14 @@ function parseArguments() {
   if (midiChannel < 0 || midiChannel > 15)
     throw new Error(`Invalid midi channel '${midiChannel}' outside of the range of [0,15] was given`);
 
+  // Check if the file exists
+  let sequenceFile = argv.f || argv.file;
+  if (!sequenceFile) throw new Error("Please a supply a sequence file");
+  let stats = fs.statSync(sequenceFile);
+  if (!stats || !stats.isFile()) throw new Error("The supplied sequence file is not a valid file or does not exist");
+
   // Return options
-  return { midiOutput, midiChannel };
+  return { midiOutput, midiChannel, sequenceFile };
 }
 
 function listMidiOutputs() {
@@ -38,16 +47,28 @@ function listMidiOutputs() {
 }
 
 function printHelp() {
-  console.log(`Usage: ${process.argv[1]} -o midi_output_index -c midi_channel`);
-  console.log(`       ${process.argv[1]} --output midi_output_index --channel midi_channel`);
+  console.log(`Usage: ${process.argv[1]} -o midi_output_index -c midi_channel -f sequence_file.json`);
   console.log(`       ${process.argv[1]} -l`);
-  console.log(`       ${process.argv[1]} --list`);
-  console.log(`       ${process.argv[1]} -h`);
-  console.log(`       ${process.argv[1]} --help`);
 }
 
-function main() {
-  console.log('hello');
+function main(options) {
+  // Create a whammy controller
+  let controller = new WhammyController(options.midiOutput, options.midiChannel);
+
+  // Read and parse json file
+  let reader = new WhammyControlActionSequencerFileReader(controller);
+  reader.readFile(options.sequenceFile, (sequencer) => {
+    // Trap sigint to shut down gracefully
+    process.on('SIGINT', () => {
+      console.log('CTRL-C caught, shutting down gracefully');
+      // Stop the sequencer before shutting down
+      sequencer.stop();
+      process.exit();
+    });
+
+    // Start the sequence
+    sequencer.start();
+  });
 }
 
 const modeHandlers = {
@@ -62,4 +83,4 @@ try { options = parseArguments(); } catch (e) { console.log(e.message); printHel
 
 // Execute different functions depending on the selected mode
 let modeHandler = modeHandlers[options.mode || 'default'];
-modeHandler();
+modeHandler(options);
