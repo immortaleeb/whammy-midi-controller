@@ -22,4 +22,14 @@ describe('WhammyModes', () => {
       WhammyModes.SHALLOW.bypass.should.not.equal(undefined);
     });
   });
+
+  describe('#fromId', () => {
+    it('should find shallow mode by id', () => {
+      WhammyModes.fromId(0).should.equal(WhammyModes.SHALLOW);
+    });
+
+    it('should not find a mode for an invalid id', () => {
+      should.equal(WhammyModes.fromId(100000), undefined);
+    });
+  });
 }); 
