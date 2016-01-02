@@ -1,0 +1,15 @@
+{
+  "name": "whammy-midi-controller",
+  "description": "A midi controller for the Digitech Whammy pedal",
+  "main": "main.js",
+  "authors": [
+    "immortaleeb <immortaleeb@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/immortaleeb/whammy-midi-controller",
+  "moduleType": [],
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#~1.2.3"
+  }
+}
