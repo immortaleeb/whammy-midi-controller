@@ -6,16 +6,20 @@
 
     <link rel="import" href="elements/timer.html">
     <link rel="import" href="elements/sequence-data.html">
+    <link rel="import" href="elements/sequence-view.html">
   </head>
   <body>
-    <timer-data></timer-data>
-    <sequence-data></sequence-data>
-    <button data-timer="start">Start timer</button>
-    <button data-timer="stop">Stop timer</button>
-    <div id="reply"></div>
+    <template is="dom-bind" id="app">
+      <timer-data></timer-data>
+      <sequence-data sequence="{{sequence}}"></sequence-data>
+      <sequence-view sequence="{{sequence}}"></sequence-view>
+      <button data-timer="start">Start timer</button>
+      <button data-timer="stop">Stop timer</button>
+      <div id="reply"></div>
 
-    <script type="text/javascript">
-      registerEventListeners();
-    </script>
+      <script type="text/javascript">
+        registerEventListeners();
+      </script>
+    </template>
   </body>
 </html>

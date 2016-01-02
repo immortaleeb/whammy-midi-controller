@@ -1,0 +1,60 @@
+<link rel="import"
+      href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="sequence-step">
+  <template>
+    <style>
+      .step {
+        border: 1px solid black;
+        display: block;
+      }
+    </style>
+
+    <div class="step">
+      <p>Mode: <input type="number" value="{{step.mode::change}}"></p>
+      
+      <div id="show-treadle-level">
+        <p><button id="show-treadle-level-button">Set treadle level</button></p>
+      </div>
+
+      <div id="set-treadle-level">
+        <p>Treadle: <input type="range" min="0" max="128" value="{{step.treadleLevel::change}}"> {{step.treadleLevel}} <button id="clear-treadle-level-button">Clear</button></p>
+      </div>
+    </div>
+  </template>
+  <script>
+    'use strict';
+
+    (function() {
+      Polymer({
+        is: "sequence-step",
+
+        properties: {
+          step: Object
+        },
+
+        ready() {
+          this.$['show-treadle-level-button'].addEventListener('click', () => { this.set('step.treadleLevel', 0) });
+          this.$['clear-treadle-level-button'].addEventListener('click', () => { this.set('step.treadleLevel', undefined) });
+        },
+
+        observers: ['treadleLevelChanged(step.treadleLevel)'],
+
+        treadleLevelChanged(treadleLevel) {
+          // Change string values to integers
+          if (typeof treadleLevel === 'string') {
+            return this.set('step.treadleLevel', parseInt(treadleLevel));
+          }
+
+          if (typeof treadleLevel === 'undefined') {
+            this.$['show-treadle-level'].style.display = 'block';
+            this.$['set-treadle-level'].style.display = 'none';
+          } else {
+            this.$['show-treadle-level'].style.display = 'none';
+            this.$['set-treadle-level'].style.display = 'block';
+          }
+        }
+      });
+    }());
+  </script>
+</dom-module>
