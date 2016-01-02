@@ -1,0 +1,25 @@
+<link rel="import"
+      href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="sequence-data">
+  <script>
+    'use strict';
+    (function() {
+      Polymer({
+        is: "sequence-data",
+        properties: {
+          sequence: {
+            value: [
+              {
+                "mode": 0
+              },
+              {
+                "mode": 1
+              }
+            ]
+          }
+        }
+      });
+    }());
+  </script>
+</dom-module>
