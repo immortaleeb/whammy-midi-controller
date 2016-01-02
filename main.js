@@ -1,5 +1,5 @@
 'use strict';
-
+(function() {
 const electron = require('electron'),
       app = electron.app,
       BrowserWindow = electron.BrowserWindow,
@@ -21,18 +21,21 @@ function forwardEvent(object, event, transformFunction) {
   });
 }
 
+// Passes messages on a specific message straight to an object
+function registerRendererListener(object, channel) {
+  ipcMain.on(channel, (event, method, ...args) => {
+    console.log(method, args);
+    if (object && typeof object[method] === 'function')
+      object[method](...args);
+    else
+      console.error('Invalid object or method on channel ' + channel + ' for method ' + method);
+  });
+}
+
 function registerEventListeners() {
   // Dereference the window when it's closed
   mainWindow.on('closed', () => {
     mainWindow = null;
-  });
-
-  // Listen for timer events
-  ipcMain.on('timer', (event, arg) => {
-    console.log('timer event', arg);
-    if (!timer) return;
-    if (arg == 'start') timer.start();
-    if (arg == 'stop') timer.stop();
   });
 }
 
@@ -59,5 +62,7 @@ app.on('ready', () => {
   mainWindow.webContents.on('did-finish-load', () => {
     timer = new Timer(1000);
     forwardEvent(timer, 'time');
+    registerRendererListener(timer, 'timer');
   });
 });
+}());

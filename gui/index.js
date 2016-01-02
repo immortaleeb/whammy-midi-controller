@@ -5,7 +5,7 @@ const electron = require('electron'),
 
 function addMessage(event, ...args) {
   let reply = document.querySelector('#reply');
-  reply.innerHTML += '<p>' + args + '</p>';
+  reply.innerHTML += '<p>time: ' + args + '</p>';
 }
 
 function registerEventListeners() {
