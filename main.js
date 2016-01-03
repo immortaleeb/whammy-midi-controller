@@ -70,6 +70,9 @@ app.on('ready', () => {
 
     // Create sequencer
     sequencer = new Sequencer(timer, [{ mode: 0 }]);
+    sequencer.on('activeItem', (currentItem, index) => {
+      mainWindow.webContents.send('activeStep', index);
+    });
 
     // Create sequence model
     sequenceModel = new SequenceModel();

@@ -1,12 +1,16 @@
 "use strict";
 
+const EventEmitter = require('events').EventEmitter;
+
 /**
  * A sequencer goes through a list of objects and calls execute() on them
  * each time a given timer emits a time event
  */
-class Sequencer {
+class Sequencer extends EventEmitter {
   // Creates a new sequencer
   constructor(timer, sequence) {
+    super();
+
     this._timer = timer;
     this._sequence = (sequence && sequence.slice(0)) || [];
     this._currentIndex = 0;
@@ -31,6 +35,7 @@ class Sequencer {
     let sequence = this._sequence;
 
     // Get the current item that needs to be executed
+    let currentIndex = this._currentIndex;
     let currentItem = sequence[this._currentIndex];
 
     // Set the index for the next item in the sequence
@@ -38,6 +43,9 @@ class Sequencer {
 
     // Execute the current item
     currentItem.execute();
+    
+    // Emit an event indicating the current item
+    this.emit('activeItem', currentItem, currentIndex);
   }
 
   // Starts sequencing through the sequence
