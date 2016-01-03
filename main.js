@@ -1,12 +1,14 @@
 'use strict';
 (function() {
+
 const electron = require('electron'),
       app = electron.app,
       BrowserWindow = electron.BrowserWindow,
       ipcMain = electron.ipcMain,
-      Timer = require('./src/Timer');
+      Timer = require('./src/Timer'),
+      SequenceModel = require('./src/SequenceModel');
 
-let mainWindow, timer;
+let mainWindow, timer, sequenceModel;
 
 // Forwards events emitted by a object to the renderer thread
 function forwardEvent(object, event, transformFunction) {
@@ -60,9 +62,15 @@ app.on('ready', () => {
 
   // On succesfull load: kickstart the application
   mainWindow.webContents.on('did-finish-load', () => {
+    // Create timer
     timer = new Timer(1000);
     forwardEvent(timer, 'time');
     registerRendererListener(timer, 'timer');
+
+    // Create sequence model
+    sequenceModel = new SequenceModel();
+    sequenceModel.on('sequenceChanged', sequence => console.log(sequence));
+    registerRendererListener(sequenceModel, 'sequence');
   });
 });
 }());
