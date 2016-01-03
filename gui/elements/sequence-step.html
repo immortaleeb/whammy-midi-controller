@@ -15,7 +15,7 @@
       }
     </style>
 
-    <div class="step">
+    <div id="step" class="step">
       <span id="delete-area" class="right"><a id="remove-step-button"><iron-icon icon="icons:close"></iron-icon></a></span>
       <p>Mode: <input type="number" value="{{step.mode::change}}"></p>
       
@@ -40,6 +40,10 @@
           deleteable: {
             type: Boolean,
             observer: 'deleteableChanged'
+          },
+          active: {
+            type: Boolean,
+            observer: 'activeChanged'
           }
         },
 
@@ -76,6 +80,10 @@
             this.$['show-treadle-level'].style.display = 'none';
             this.$['set-treadle-level'].style.display = 'block';
           }
+        },
+
+        activeChanged(isActive) {
+          this.$.step.style.background = isActive ? '#C0C0C0' : 'white';
         }
       });
     }());

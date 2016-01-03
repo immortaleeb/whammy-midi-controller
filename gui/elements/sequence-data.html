@@ -11,6 +11,13 @@
       Polymer({
         is: "sequence-data",
 
+        ready() {
+          ipcRenderer.on('activeStep', (event, index) => {
+            console.log('active step changed', this.activeStep);
+            this.activeStep = index;
+          });
+        },
+
         properties: {
           sequence: {
             notify: true,
@@ -22,6 +29,10 @@
                 "mode": 1
               }
             ]
+          },
+          activeStep: {
+            value: 0,
+            notify: true
           }
         },
         observers: ['_sequenceChanged(sequence.*)'],

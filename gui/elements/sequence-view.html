@@ -4,8 +4,9 @@
 
 <dom-module id="sequence-view">
   <template>
-    <template is="dom-repeat" items="{{sequence}}" as="step">
-      <sequence-step step="{{step}}" deleteable="{{canDelete}}" on-delete-step="_deleteStep"></sequence-step>
+    Step: {{activeStep}}
+    <template is="dom-repeat" items="{{sequence}}" as="step" index="index">
+      <sequence-step id$="step-{{index}}" step="{{step}}" deleteable="{{canDelete}}" on-delete-step="_deleteStep"></sequence-step>
     </template>
     <button id="add-step-button">Add step</button>
   </template>
@@ -22,6 +23,9 @@
             type: Array,
             notify: true,
             observer: 'sequenceChanged'
+          },
+          activeStep: {
+            observer: 'activeStepChanged'
           },
           canDelete: {
             type: Array,
@@ -40,6 +44,13 @@
 
         sequenceChanged() {
           this.canDelete = (this.sequence.length > 1);
+        },
+
+        activeStepChanged(newActiveStep, oldActiveStep) {
+          let oldStep = this.$$(`#step-${oldActiveStep}`);
+          let newStep = this.$$(`#step-${newActiveStep}`);
+          oldStep && (oldStep.active = false);
+          newStep && (newStep.active = true);
         },
 
         _deleteStep(event) {

@@ -11,8 +11,8 @@
   <body>
     <template is="dom-bind" id="app">
       <timer-data></timer-data>
-      <sequence-data sequence="{{sequence}}"></sequence-data>
-      <sequence-view sequence="{{sequence}}"></sequence-view>
+      <sequence-data sequence="{{sequence}}" active-step="{{activeStep}}"></sequence-data>
+      <sequence-view sequence="{{sequence}}" active-step="{{activeStep}}"></sequence-view>
       <button data-timer="start">Start timer</button>
       <button data-timer="stop">Stop timer</button>
       <div id="reply"></div>
