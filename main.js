@@ -6,9 +6,10 @@ const electron = require('electron'),
       BrowserWindow = electron.BrowserWindow,
       ipcMain = electron.ipcMain,
       Timer = require('./src/Timer'),
-      SequenceModel = require('./src/SequenceModel');
+      SequenceModel = require('./src/SequenceModel'),
+      Sequencer = require('./src/Sequencer');
 
-let mainWindow, timer, sequenceModel;
+let mainWindow, timer, sequenceModel, sequencer;
 
 // Forwards events emitted by a object to the renderer thread
 function forwardEvent(object, event, transformFunction) {
@@ -67,9 +68,17 @@ app.on('ready', () => {
     forwardEvent(timer, 'time');
     registerRendererListener(timer, 'timer');
 
+    // Create sequencer
+    sequencer = new Sequencer(timer, [{ mode: 0 }]);
+
     // Create sequence model
     sequenceModel = new SequenceModel();
-    sequenceModel.on('sequenceChanged', sequence => console.log(sequence));
+    sequenceModel.on('sequenceChanged', sequence => {
+      let actionSequence = sequence.map(step => {
+        return { execute() { console.log(step.mode + ' - ' + step.treadleLevel) } };
+      });
+      sequencer.setSequence(actionSequence);
+    });
     registerRendererListener(sequenceModel, 'sequence');
   });
 });

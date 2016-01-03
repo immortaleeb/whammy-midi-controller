@@ -20,6 +20,12 @@ class Sequencer {
   // Returns the sequence
   get sequence() { return this._sequence; }
 
+  setSequence(newSequence) {
+    if (newSequence.length < 1)
+      throw new Error('A sequence needs to have at least one item');
+    this._sequence = newSequence;
+  }
+
   // Called when a time event is sent by the timer
   _onTimeEvent() {
     let sequence = this._sequence;
