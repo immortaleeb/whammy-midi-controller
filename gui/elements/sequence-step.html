@@ -1,5 +1,6 @@
 <link rel="import"
       href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
 <dom-module id="sequence-step">
   <template>
@@ -8,9 +9,14 @@
         border: 1px solid black;
         display: block;
       }
+
+      .right {
+        float: right;
+      }
     </style>
 
     <div class="step">
+      <span id="delete-area" class="right"><a id="remove-step-button"><iron-icon icon="icons:close"></iron-icon></a></span>
       <p>Mode: <input type="number" value="{{step.mode::change}}"></p>
       
       <div id="show-treadle-level">
@@ -30,15 +36,27 @@
         is: "sequence-step",
 
         properties: {
-          step: Object
+          step: Object,
+          deleteable: {
+            type: Boolean,
+            observer: 'deleteableChanged'
+          }
         },
 
         ready() {
           this.$['show-treadle-level-button'].addEventListener('click', () => { this.set('step.treadleLevel', 0) });
           this.$['clear-treadle-level-button'].addEventListener('click', () => { this.set('step.treadleLevel', undefined) });
+
+          this.$['remove-step-button'].addEventListener('click', () => {
+            this.fire('delete-step', { step: this.step });
+          });
         },
 
         observers: ['modeChanged(step.mode)', 'treadleLevelChanged(step.treadleLevel)'],
+
+        deleteableChanged(deleteable) {
+          this.$['delete-area'].style.display = deleteable ? 'inline' : 'none';
+        },
 
         modeChanged(mode) {
           if (typeof mode !== 'number')
