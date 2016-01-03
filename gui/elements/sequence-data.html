@@ -3,10 +3,14 @@
 
 <dom-module id="sequence-data">
   <script>
-    'use strict';
     (function() {
+      'use strict';
+
+      const ipcRenderer = require('electron').ipcRenderer;
+
       Polymer({
         is: "sequence-data",
+
         properties: {
           sequence: {
             notify: true,
@@ -19,6 +23,11 @@
               }
             ]
           }
+        },
+        observers: ['_sequenceChanged(sequence.*)'],
+
+        _sequenceChanged(changeRecord) {
+          ipcRenderer.send('sequence', 'setSequence', changeRecord.base);
         }
       });
     }());
