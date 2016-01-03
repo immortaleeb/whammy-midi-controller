@@ -38,7 +38,12 @@
           this.$['clear-treadle-level-button'].addEventListener('click', () => { this.set('step.treadleLevel', undefined) });
         },
 
-        observers: ['treadleLevelChanged(step.treadleLevel)'],
+        observers: ['modeChanged(step.mode)', 'treadleLevelChanged(step.treadleLevel)'],
+
+        modeChanged(mode) {
+          if (typeof mode !== 'number')
+            this.set('step.mode', parseInt(mode));
+        },
 
         treadleLevelChanged(treadleLevel) {
           // Change string values to integers
