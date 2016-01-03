@@ -7,6 +7,7 @@
     <template is="dom-repeat" items="{{sequence}}" as="step">
       <sequence-step step="{{step}}"></sequence-step>
     </template>
+    <button id="add-step-button">Add step</button>
   </template>
 
   <script>
@@ -15,8 +16,16 @@
     (function() {
       Polymer({
         is: 'sequence-view',
+
         properties: {
-          sequence: Array
+          sequence: Array,
+          notify: true
+        },
+
+        ready() {
+          this.$['add-step-button'].addEventListener('click', () => {
+            this.push('sequence', { mode: 0 });
+          });
         }
       });
     }());
