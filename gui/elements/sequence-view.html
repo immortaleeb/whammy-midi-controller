@@ -4,7 +4,6 @@
 
 <dom-module id="sequence-view">
   <template>
-    Step: {{activeStep}}
     <template is="dom-repeat" items="{{sequence}}" as="step" index="index">
       <sequence-step id$="step-{{index}}" step="{{step}}" deleteable="{{canDelete}}" on-delete-step="_deleteStep"></sequence-step>
     </template>
