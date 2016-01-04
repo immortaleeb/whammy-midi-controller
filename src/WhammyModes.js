@@ -47,6 +47,14 @@ const MODES = {
       if (!(mode instanceof WhammyMode)) return false;
       return mode.id === id;
     });
+  },
+
+  all() {
+    let res = [];
+    _.each(this, (mode, key) => {
+      if (typeof mode !== 'function') res.push(mode);
+    });
+    return res;
   }
 };
 
