@@ -1,0 +1,91 @@
+<link rel="import"
+      href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="timer-controls">
+  <template>
+    <style>
+      .time-input {
+        width: 5em;
+      }
+
+      .bpm-input {
+        width: 3em;
+      }
+    </style>
+
+    <p>
+      Speed:
+      <input type="number" on-change="_checkRange" value="{{timeInterval::change}}" class="time-input"> ms
+      or
+      <input type="number" on-change="_checkRange" value="{{bpm::change}}" class="bpm-input"> BPM
+    </p>
+    <p>
+      <button on-click="_startTimer">Run sequence</button>
+      <button on-click="_stopTimer">Stop sequence</button>
+    </p>
+  </template>
+
+  <script>
+    "use strict";
+
+    (function() {
+    const ipcRenderer = require('electron').ipcRenderer;
+
+    function bpmToMs(bpm) {
+      return Math.round(60000/ bpm);
+    }
+
+    function msToBpm(ms) {
+      return Math.round(60000 / ms);
+    }
+
+    Polymer({
+      is: "timer-controls",
+      properties: {
+        timeInterval: {
+          value: 1000,
+          observer: 'timeIntervalChanged'
+        },
+        bpm: {
+          value: 60,
+          observer: 'bpmChanged'
+        }
+      },
+
+      timeIntervalChanged(newInterval, oldInterval) {
+        if (typeof newInterval === 'string') {
+          return this.set('timeInterval', parseInt(newInterval));
+        }
+
+        // Notify the main thread
+        ipcRenderer.send('timer', 'setInterval', newInterval);
+
+        // update the bpm
+        this.bpm = msToBpm(newInterval);
+      },
+
+      bpmChanged(newBpm, oldBpm) {
+        if (typeof newBpm === 'string') {
+          return this.set('bpm', parseInt(newBpm));
+        }
+
+        // Update the time interval
+        this.timeInterval = bpmToMs(newBpm);
+      },
+
+      _startTimer() {
+        ipcRenderer.send('timer', 'start');
+      },
+
+      _stopTimer() {
+        ipcRenderer.send('timer', 'stop');
+      },
+
+      _checkRange(e) {
+        let val = parseInt(e.target.value);
+        if (val <= 0) e.target.value = 1;
+      }
+    });
+    }());
+  </script>
+</dom-module>
