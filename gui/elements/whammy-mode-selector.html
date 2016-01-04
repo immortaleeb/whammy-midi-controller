@@ -1,0 +1,45 @@
+<link rel="import"
+      href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="whammy-mode-selector">
+  <template>
+    <select on-change="_selectionChanged">
+      <template is="dom-repeat" items="{{modes}}" as="mode">
+        <option value="{{mode.id}}" selected$="{{isSelected(mode)}}">{{mode.name}}</option>
+      </template>
+    </select>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const WhammyModes = require('../src/WhammyModes'),
+            allModes = WhammyModes.all(),
+            shallowMode = WhammyModes.SHALLOW;
+
+      Polymer({
+        is: "whammy-mode-selector",
+
+        properties: {
+          modes: {
+            value: allModes,
+            notify: true
+          },
+          selectedMode: {
+            value: shallowMode,
+            notify: true
+          }
+        },
+
+        isSelected(mode) {
+          return mode == this.selectedMode;
+        },
+
+        _selectionChanged(e) {
+          this.selectedMode = WhammyModes.fromId(parseInt(e.target.value));
+        }
+      });
+    }());
+  </script>
+</dom-module>
