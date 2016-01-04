@@ -36,7 +36,6 @@ function forwardEvent(object, event, transformFunction) {
 // Passes messages on a specific message straight to an object
 function registerRendererListener(object, channel) {
   ipcMain.on(channel, (event, method, ...args) => {
-    console.log(method, args);
     if (object && typeof object[method] === 'function')
       object[method](...args);
     else
