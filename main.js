@@ -112,10 +112,7 @@ app.on('ready', () => {
       // Convert the JSON sequence from the gui to a proper action sequence
       // TODO optimize this so we don't map the whole array every time
       let actionSequence = sequence.map(step => {
-        return new WhammyControlAction(whammyController, {
-          mode: WhammyModes.fromId(step.mode),
-          treadleLevel: step.treadleLevel
-        });
+        return new WhammyControlAction(whammyController, step);
       });
 
       // set the new sequence

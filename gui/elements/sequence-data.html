@@ -6,7 +6,8 @@
     (function() {
       'use strict';
 
-      const ipcRenderer = require('electron').ipcRenderer;
+      const ipcRenderer = require('electron').ipcRenderer,
+            WhammyModes = require('../src/WhammyModes');
 
       Polymer({
         is: "sequence-data",
@@ -23,10 +24,10 @@
             notify: true,
             value: [
               {
-                "mode": 0,
+                "mode": WhammyModes.SHALLOW
               },
               {
-                "mode": 1
+                "mode": WhammyModes.DIVE_BOMB
               }
             ]
           },

@@ -1,6 +1,7 @@
 <link rel="import"
       href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="whammy-mode-selector.html">
 
 <dom-module id="sequence-step">
   <template>
@@ -17,7 +18,7 @@
 
     <div id="step" class="step">
       <span id="delete-area" class="right"><a id="remove-step-button"><iron-icon icon="icons:close"></iron-icon></a></span>
-      <p>Mode: <input type="number" value="{{step.mode::change}}"></p>
+      <p>Mode: <whammy-mode-selector selected-mode="{{step.mode}}"></whammy-mode-selector></p>
       
       <div id="show-treadle-level">
         <p><button id="show-treadle-level-button">Set treadle level</button></p>
@@ -56,15 +57,10 @@
           });
         },
 
-        observers: ['modeChanged(step.mode)', 'treadleLevelChanged(step.treadleLevel)'],
+        observers: ['treadleLevelChanged(step.treadleLevel)'],
 
         deleteableChanged(deleteable) {
           this.$['delete-area'].style.display = deleteable ? 'inline' : 'none';
-        },
-
-        modeChanged(mode) {
-          if (typeof mode !== 'number')
-            this.set('step.mode', parseInt(mode));
         },
 
         treadleLevelChanged(treadleLevel) {
