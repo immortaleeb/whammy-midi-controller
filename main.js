@@ -3,13 +3,20 @@
 
 const electron = require('electron'),
       app = electron.app,
+      dialog = electron.dialog,
       BrowserWindow = electron.BrowserWindow,
       ipcMain = electron.ipcMain,
+
+      easymidi = require('easymidi'),
+
       Timer = require('./src/Timer'),
       SequenceModel = require('./src/SequenceModel'),
-      Sequencer = require('./src/Sequencer');
+      Sequencer = require('./src/Sequencer'),
+      WhammyController = require('./src/WhammyController');
 
-let mainWindow, timer, sequenceModel, sequencer;
+let mainWindow, timer, sequenceModel, sequencer,
+    whammyController = new WhammyController(),
+    errors = 0;
 
 // Forwards events emitted by a object to the renderer thread
 function forwardEvent(object, event, transformFunction) {
@@ -40,15 +47,37 @@ function registerEventListeners() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // Notify the ui of the different midi outputs
+  ipcMain.on('request-midi-outputs', () => {
+    mainWindow.webContents.send('midi-outputs', midiOutputs);
+  });
+
+  // change the midi output when requested
+  ipcMain.on('midiOutput', (event, message, arg) => {
+    if (message === 'setMidiOutput') {
+      console.log('Changed midi output to ' + arg);
+      whammyController.setMidiOutput(new easymidi.Output(arg));
+    }
+  });
+}
+
+// Check if there are any midi outputs
+let midiOutputs = easymidi.getOutputs();
+if (midiOutputs.length == 0) {
+  dialog.showErrorBox('No midi outputs', 'Unable to launch the application because no valid midi outputs were found');
+  app.quit();
 }
 
 // Quit when all windows are closed
 app.on('window-all-closed', () => {
-  // On OS X the application doesn't necessarly quit when all windows are closed
-  if (process.platform != 'darwin') app.quit();
+  app.quit();
 });
 
 app.on('ready', () => {
+  // Don't continue if there were errors
+  if (errors > 0) return;
+
   // Create the main browser window
   mainWindow = new BrowserWindow({width: 800, height: 600});
 

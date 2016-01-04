@@ -1,0 +1,54 @@
+<link rel="import"
+      href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="midi-output-selector">
+  <template>
+    <p>
+      Midi output:
+      <select id="midi-output" on-change="_selectMidiOutput">
+      <template is="dom-repeat" items="{{midiOutputs}}" as="output">
+        <option value="{{output}}">{{output}}</option>
+      </template>
+      </select>
+    </p>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      const ipcRenderer = require('electron').ipcRenderer;
+
+      Polymer({
+        is: "midi-output-selector",
+
+        properties: {
+          midiOutputs: {
+            type: Array
+          },
+          selectedMidiOutput: {
+            type: String,
+            observer: 'selectedMidiOutputChanged'
+          }
+        },
+
+        ready() {
+          ipcRenderer.on('midi-outputs', (event, outputs) => {
+            this.midiOutputs = outputs;
+            // Force a change
+            this._selectMidiOutput({target: { value: this.midiOutputs[0] }});
+          });
+          ipcRenderer.send('request-midi-outputs');
+        },
+
+        selectedMidiOutputChanged(midiOutput) {
+          console.log('midi output changed');
+          ipcRenderer.send('midiOutput', 'setMidiOutput', midiOutput);
+        },
+
+        _selectMidiOutput(event) {
+          this.selectedMidiOutput = event.target.value;
+        }
+      });
+    }());
+  </script>
+</dom-module>

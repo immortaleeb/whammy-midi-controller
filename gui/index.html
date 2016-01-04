@@ -7,9 +7,11 @@
     <link rel="import" href="elements/timer.html">
     <link rel="import" href="elements/sequence-data.html">
     <link rel="import" href="elements/sequence-view.html">
+    <link rel="import" href="elements/midi-output-selector.html">
   </head>
   <body>
     <template is="dom-bind" id="app">
+      <midi-output-selector></midi-output-selector>
       <timer-data></timer-data>
       <sequence-data sequence="{{sequence}}" active-step="{{activeStep}}"></sequence-data>
       <sequence-view sequence="{{sequence}}" active-step="{{activeStep}}"></sequence-view>
