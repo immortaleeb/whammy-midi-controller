@@ -12,7 +12,9 @@ const electron = require('electron'),
       Timer = require('./src/Timer'),
       SequenceModel = require('./src/SequenceModel'),
       Sequencer = require('./src/Sequencer'),
-      WhammyController = require('./src/WhammyController');
+      WhammyController = require('./src/WhammyController'),
+      WhammyControlAction = require('./src/WhammyControlAction'),
+      WhammyModes = require('./src/WhammyModes');
 
 let mainWindow, timer, sequenceModel, sequencer,
     whammyController = new WhammyController(),
@@ -105,10 +107,19 @@ app.on('ready', () => {
 
     // Create sequence model
     sequenceModel = new SequenceModel();
+
+    // If the sequence changed, the sequencer should be updated
     sequenceModel.on('sequenceChanged', sequence => {
+      // Convert the JSON sequence from the gui to a proper action sequence
+      // TODO optimize this so we don't map the whole array every time
       let actionSequence = sequence.map(step => {
-        return { execute() { console.log(step.mode + ' - ' + step.treadleLevel) } };
+        return new WhammyControlAction(whammyController, {
+          mode: WhammyModes.fromId(step.mode),
+          treadleLevel: step.treadleLevel
+        });
       });
+
+      // set the new sequence
       sequencer.setSequence(actionSequence);
     });
     registerRendererListener(sequenceModel, 'sequence');
