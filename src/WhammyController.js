@@ -3,13 +3,23 @@
 const _ = require('underscore');
 
 /**
+ * A dummy midi output
+ */
+const DUMMY_MIDI_OUTPUT = { send() { } };
+
+/**
  * A WhammyController can be used to send midi signals to a whammy pedal to control its state
  */
 class WhammyController {
   // Creates a new WhammyController
   constructor(midiOutput, midiChannel) {
+    this._midiOutput = midiOutput || DUMMY_MIDI_OUTPUT;
+    this._midiChannel = midiChannel || 0;
+  }
+
+  // Sets the midi output of the controller
+  setMidiOutput(midiOutput) {
     this._midiOutput = midiOutput;
-    this._midiChannel = midiChannel;
   }
 
   // Sends data to the pedal on the selected midi channel
